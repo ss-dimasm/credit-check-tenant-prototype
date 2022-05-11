@@ -43,7 +43,7 @@ export const DataPage: FC = () => {
   return (
     <FlexContainer isFlexAuto>
       <SecondaryNavContainer>
-        <Title>Data</Title>
+        <Title>Test</Title>
         <Icon className={elMb5} icon="webhooksInfographic" iconSize="large" />
         <Subtitle>Data Fetching</Subtitle>
         <SmallText hasGreyText>

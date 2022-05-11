@@ -62,18 +62,24 @@ export const Nav: FC = () => {
         },
       ],
     },
+    {
+      itemIndex: 4,
+      iconId: 'profileMenu',
+      text: 'Tenancies',
+      callback: navigate(history, Routes.TENANCIES),
+    },
   ]
 
   if (!connectIsDesktop) {
     navOptions.push(
       {
-        itemIndex: 4,
+        itemIndex: 5,
         callback: () => (window.location.href = window.reapit.config.marketplaceUrl),
         iconId: 'appsMenu',
         text: 'Apps',
       },
       {
-        itemIndex: 5,
+        itemIndex: 6,
         callback: connectLogoutRedirect,
         isSecondary: true,
         iconId: 'logoutMenu',
