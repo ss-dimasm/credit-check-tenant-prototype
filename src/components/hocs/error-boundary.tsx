@@ -5,7 +5,9 @@ export interface ErrorState {
   hasFailed: boolean
 }
 
-export class ErrorBoundary extends Component {
+export class ErrorBoundary extends Component<{
+  children: React.ReactNode
+}> {
   state = {
     hasFailed: false,
   }

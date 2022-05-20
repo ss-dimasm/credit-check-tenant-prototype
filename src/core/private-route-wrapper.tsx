@@ -5,7 +5,9 @@ import { reapitConnectBrowserSession } from './connect-session'
 import { useLocation, Redirect } from 'react-router'
 import { Loader, MainContainer, PageContainer } from '@reapit/elements'
 
-export type PrivateRouteWrapperProps = {}
+export type PrivateRouteWrapperProps = {
+  children: React.ReactNode
+}
 
 export const PrivateRouteWrapper: FC<PrivateRouteWrapperProps> = ({ children }) => {
   const { connectSession, connectInternalRedirect } = useReapitConnect(reapitConnectBrowserSession)

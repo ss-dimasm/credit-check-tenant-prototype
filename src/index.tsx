@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Config } from './types/global'
 import config from './reapit.config.json'
+import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 // Init global config
 window.reapit = {
@@ -40,6 +41,10 @@ const run = async () => {
     const { default: App } = await import('./core/app')
 
     renderApp(App)
+    // If you want your app to work offline and load faster, you can change
+    // unregister() to register() below. Note this comes with some pitfalls.
+    // Learn more about service workers: https://cra.link/PWA
+    serviceWorkerRegistration.register()
   } catch (error) {
     console.error('Cannot fetch config', error)
   }

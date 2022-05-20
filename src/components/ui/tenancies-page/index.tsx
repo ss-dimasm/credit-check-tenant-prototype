@@ -6,7 +6,7 @@ import { Button, FlexContainer, Loader, Pagination, RowProps, Table, useModal } 
 import useGetSpecificApplicant from '../../../platform-api/applicants/get-specific-applicant'
 import useGetSpecificProperty from '../../../platform-api/properties/get-specific-property'
 import useGetSpecificNegotiator from '../../../platform-api/negotiators/get-specific-negotiator'
-import ModalTab from './modal-tab/modal-tab'
+import ModalTab from './modal-tab'
 
 type RenderedTenanciesPageProps = {
   data: NonNullable<TenancyModelPagedResult>
@@ -22,7 +22,7 @@ type RenderedTenanciesPageProps = {
 
 const generateTableContent = (data: NonNullable<TenancyModelPagedResult>) => (handleModal: () => void) => {
   const result: RowProps[] = []
-  data._embedded?.map((data: TenancyModel) => {
+  data?._embedded?.map((data: TenancyModel) => {
     result.push({
       cells: [
         {
@@ -119,6 +119,3 @@ const RenderedTenanciesPage = ({
 }
 
 export default RenderedTenanciesPage
-// Yes Will I;m available
-// Wow, that was amazing, I'll notice with the others Will
-// Oh thats great Will, I will notice the others first, thank you

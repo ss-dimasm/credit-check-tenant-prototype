@@ -1,7 +1,9 @@
 import React from 'react'
 import { ApplicantModel, NegotiatorModel, PropertyModel, TenancyModel } from '@reapit/foundations-ts-definitions'
+import { Tabs } from '@reapit/elements'
+import { useModalTabContent } from './use-modal-tab-content'
 
-type ModalTabProps = {
+export type ModalTabProps = {
   data: {
     applicant: ApplicantModel | undefined
     tenant: TenancyModel | null
@@ -15,8 +17,24 @@ type ModalTabProps = {
 // able to check is the current tenant is pass for have new.
 
 const ModalTab = (props: ModalTabProps) => {
+  const [tabName, changeHandler, tabOptions, tabContent] = useModalTabContent({
+    tabName: 'wekekeform',
+    tabsName: ['Applicant', 'Negotiator', 'Property'],
+  })
   console.log(props)
-  return <div>ModalTab</div>
+  return (
+    <>
+      <Tabs
+        name={tabName}
+        isFullWidth
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          changeHandler.setTabActiveIndex(e.target.value as typeof changeHandler.currentTabActiveIndex)
+        }
+        options={tabOptions}
+      />
+      {tabContent}
+    </>
+  )
 }
 
 export default ModalTab
