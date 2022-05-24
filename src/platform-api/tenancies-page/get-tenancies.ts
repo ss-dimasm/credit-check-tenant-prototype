@@ -1,6 +1,6 @@
 import { TenancyModelPagedResult } from '@reapit/foundations-ts-definitions'
 import { useQuery } from 'react-query'
-import Axios from '../../axios'
+import Axios from 'axios-helper'
 import { URLS } from '../../constants/api'
 
 export type FetchGetTenanciesProps = {

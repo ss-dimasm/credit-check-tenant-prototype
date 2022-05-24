@@ -66,10 +66,10 @@ const TenanciesPage = () => {
   const { data, isFetched } = useFetchGetTenancies({ page: currentPage, status: statusParams })
 
   const renderResult = () => {
-    if (isFetched)
+    if (isFetched && !!data)
       return (
         <RenderedTenanciesPage
-          data={data!}
+          data={data}
           cellIndexHandler={{ handleIndexCell, indexCell }}
           paginationHandler={{ handlePagination, currentPage }}
         />

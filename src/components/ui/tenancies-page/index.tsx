@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { TenancyModel, TenancyModelPagedResult } from '@reapit/foundations-ts-definitions'
 import { Button, FlexContainer, Loader, Pagination, RowProps, Table, useModal } from '@reapit/elements'
@@ -11,18 +11,26 @@ import ModalTab from './modal-tab'
 type RenderedTenanciesPageProps = {
   data: NonNullable<TenancyModelPagedResult>
   cellIndexHandler: {
-    handleIndexCell: React.Dispatch<React.SetStateAction<number | null>>
+    handleIndexCell: React.Dispatch<React.SetStateAction<RenderedTenanciesPageProps['cellIndexHandler']['indexCell']>>
     indexCell: number | null
   }
   paginationHandler: {
-    handlePagination: React.Dispatch<React.SetStateAction<number>>
+    handlePagination: React.Dispatch<
+      React.SetStateAction<RenderedTenanciesPageProps['paginationHandler']['currentPage']>
+    >
     currentPage: number
   }
 }
 
-const generateTableContent = (data: NonNullable<TenancyModelPagedResult>) => (handleModal: () => void) => {
+const generateTableContent = ({
+  data,
+  handleModal,
+}: {
+  data: NonNullable<TenancyModelPagedResult>
+  handleModal: (data: TenancyModel) => void
+}) => {
   const result: RowProps[] = []
-  data?._embedded?.map((data: TenancyModel) => {
+  data?._embedded?.forEach((data: TenancyModel) => {
     result.push({
       cells: [
         {
@@ -37,7 +45,7 @@ const generateTableContent = (data: NonNullable<TenancyModelPagedResult>) => (ha
       expandableContent: {
         content: (
           <FlexContainer isFlexAlignEnd>
-            <Button intent="primary" fixedWidth onClick={handleModal}>
+            <Button intent="primary" fixedWidth onClick={() => handleModal(data)}>
               Details
             </Button>
           </FlexContainer>
@@ -54,40 +62,51 @@ const RenderedTenanciesPage = ({
   cellIndexHandler: { handleIndexCell, indexCell },
   paginationHandler: { handlePagination, currentPage },
 }: RenderedTenanciesPageProps) => {
-  const [selectedTemporaryTenancyData, setSelectedTemporaryTenancyData] = React.useState<TenancyModel | null>(null)
+  const [selectedTemporaryTenancyData, setSelectedTemporaryTenancyData] = React.useState<TenancyModel | undefined>(
+    undefined,
+  )
 
-  const { data: ApplicantData, isFetched: isTempApplicantFetched } = useGetSpecificApplicant({
-    id: selectedTemporaryTenancyData?.applicantId,
+  const applicantFetchCustomHook = useGetSpecificApplicant({
+    id: selectedTemporaryTenancyData?.applicantId ?? 'asd',
   })
-  const { data: PropertiesData, isFetched: isTempPropertyFetched } = useGetSpecificProperty({
+
+  const propertyFetchCustomHook = useGetSpecificProperty({
     id: selectedTemporaryTenancyData?.propertyId,
   })
-  const { data: NegotiatorsData, isFetched: isTempNegotiatorFetched } = useGetSpecificNegotiator({
+
+  const negotiatorFetchCustomHook = useGetSpecificNegotiator({
     id: selectedTemporaryTenancyData?.negotiatorId,
   })
 
-  // store all temporary data with this variable
-  const allTempData = {
-    isAllTempFetched: !!(
-      isTempApplicantFetched &&
-      isTempPropertyFetched &&
-      isTempNegotiatorFetched &&
-      selectedTemporaryTenancyData
-    ),
-    data: {
-      applicant: ApplicantData,
-      tenant: selectedTemporaryTenancyData,
-      negotiator: NegotiatorsData,
-      property: PropertiesData,
-    },
-  } as const
+  const allTempData = useMemo(
+    () => ({
+      isAllTempFetched: !!(
+        applicantFetchCustomHook.isFetched &&
+        propertyFetchCustomHook.isFetched &&
+        negotiatorFetchCustomHook.isFetched &&
+        selectedTemporaryTenancyData
+      ),
+      data: {
+        applicant: applicantFetchCustomHook.data,
+        tenant: selectedTemporaryTenancyData,
+        negotiator: negotiatorFetchCustomHook.data,
+        property: propertyFetchCustomHook.data,
+      },
+    }),
+    [applicantFetchCustomHook, selectedTemporaryTenancyData, propertyFetchCustomHook, negotiatorFetchCustomHook],
+  )
 
   const { openModal, Modal: ModalTenant } = useModal('docs-root')
 
-  const handleModal = React.useCallback(() => {
-    if (typeof indexCell === 'number') setSelectedTemporaryTenancyData(data?._embedded?.[indexCell] as TenancyModel)
-    openModal()
-  }, [indexCell])
+  const handleModal = React.useCallback(
+    (data: TenancyModel) => {
+      typeof indexCell === 'number' && setSelectedTemporaryTenancyData(data)
+      openModal()
+    },
+    [indexCell],
+  )
+
+  console.log(selectedTemporaryTenancyData?.applicantId)
 
   return (
     <>
@@ -96,7 +115,7 @@ const RenderedTenanciesPage = ({
           numberColumns={3}
           indexExpandedRow={indexCell}
           setIndexExpandedRow={handleIndexCell}
-          rows={generateTableContent(data)(handleModal)}
+          rows={generateTableContent({ data, handleModal })}
         />
       </div>
       <div className="el-mt6">

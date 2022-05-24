@@ -3,7 +3,10 @@ import { TabsOption } from '@reapit/elements'
 
 type UseModalTabContentProps = {
   tabName: string
-  tabsName: string[]
+  tabsName: {
+    names: string
+    content: React.ReactElement
+  }[]
 }
 
 export const useModalTabContent = ({
@@ -20,31 +23,32 @@ export const useModalTabContent = ({
 ] => {
   const [currentTabActiveIndex, setTabActiveIndex] = React.useState<any>('0')
 
-  const optionsStatic = useCallback(
+  const tabOptions = useCallback(
     ({
       tabName,
       tabsName,
       currentTabActiveIndex,
     }: {
-      tabName: UseModalTabContentProps['tabName']
+      tabName: ReturnType<typeof useModalTabContent>['0']
       tabsName: UseModalTabContentProps['tabsName']
       currentTabActiveIndex: ReturnType<typeof useModalTabContent>['1']['currentTabActiveIndex']
     }): TabsOption[] => {
       return tabsName.map((tab, index) => ({
-        // @ts-ignore
-        id: tabName + React.useId(),
+        id: `${tabName}-${index}`,
         value: index.toString(),
-        text: tab,
+        text: tab.names,
         isChecked: currentTabActiveIndex === index.toString(),
       }))
     },
     [],
   )
 
+  const returnedContent = tabsName[currentTabActiveIndex]['content']
+
   return [
     tabName,
     { currentTabActiveIndex, setTabActiveIndex },
-    optionsStatic({ tabName, tabsName, currentTabActiveIndex }),
-    <>h1</>,
+    tabOptions({ tabName, tabsName, currentTabActiveIndex }),
+    returnedContent,
   ]
 }

@@ -1,6 +1,6 @@
 import { PropertyModel } from '@reapit/foundations-ts-definitions'
 import { useQuery } from 'react-query'
-import Axios from '../../axios'
+import Axios from '../../axios-helper'
 import { URLS } from '../../constants/api'
 
 type GetSpecificPropertyProps = {
@@ -14,7 +14,7 @@ const fetchGetSpecificProperty = async ({ id }: GetSpecificPropertyProps) => {
 
 const useGetSpecificProperty = (props: GetSpecificPropertyProps) => {
   return useQuery(['Get Specific Property ID', props.id], () => fetchGetSpecificProperty(props), {
-    enabled: !!props.id,
+    enabled: props.id === '' || !!props.id,
   })
 }
 

@@ -8,8 +8,6 @@ const Axios = axios.create({
     ...BASE_HEADERS,
   },
 })
-
-// get the access token
 ;(async () => {
   if (reapitConnectBrowserSession) {
     reapitConnectBrowserSession.connectSession().then((session) => {
